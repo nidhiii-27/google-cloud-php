@@ -180,6 +180,29 @@ class StorageClientTest extends TestCase
         $this->assertInstanceOf(Bucket::class, $this->client->createBucket('bucket'));
     }
 
+    public function testCreateBucketWithEncryptionEnforcement()
+    {
+        $encryptionConfig = [
+            'encryption' => [
+                'googleManagedEncryptionEnforcementConfig' => [
+                    'restrictionMode' => 'FULLY_RESTRICTED'
+                ]
+            ]
+        ];
+
+        $this->connection->insertBucket($encryptionConfig + [
+            'name' => 'bucket',
+            'project' => self::PROJECT
+        ])->willReturn(['name' => 'bucket'] + $encryptionConfig);
+        $this->connection->projectId()
+            ->willReturn(self::PROJECT);
+        $this->client->___setProperty('connection', $this->connection->reveal());
+
+        $bucket = $this->client->createBucket('bucket', $encryptionConfig);
+
+        $this->assertEquals($encryptionConfig['encryption'], $bucket->info()['encryption']);
+    }
+
     public function testCreatesDualRegionBucket()
     {
         $this->connection

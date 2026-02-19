@@ -195,6 +195,51 @@
                         "defaultKmsKeyName": {
                             "type": "string",
                             "description": "A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified."
+                        },
+                        "googleManagedEncryptionEnforcementConfig": {
+                            "type": "object",
+                            "description": "Google-managed encryption enforcement configuration for a bucket.",
+                            "properties": {
+                                "restrictionMode": {
+                                    "type": "string",
+                                    "description": "The restriction mode of the Google-managed encryption enforcement configuration."
+                                },
+                                "effectiveTime": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "The time from which the Google-managed encryption enforcement configuration is effective."
+                                }
+                            }
+                        },
+                        "customerManagedEncryptionEnforcementConfig": {
+                            "type": "object",
+                            "description": "Customer-managed encryption enforcement configuration for a bucket.",
+                            "properties": {
+                                "restrictionMode": {
+                                    "type": "string",
+                                    "description": "The restriction mode of the customer-managed encryption enforcement configuration."
+                                },
+                                "effectiveTime": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "The time from which the customer-managed encryption enforcement configuration is effective."
+                                }
+                            }
+                        },
+                        "customerSuppliedEncryptionEnforcementConfig": {
+                            "type": "object",
+                            "description": "Customer-supplied encryption enforcement configuration for a bucket.",
+                            "properties": {
+                                "restrictionMode": {
+                                    "type": "string",
+                                    "description": "The restriction mode of the customer-supplied encryption enforcement configuration."
+                                },
+                                "effectiveTime": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "The time from which the customer-supplied encryption enforcement configuration is effective."
+                                }
+                            }
                         }
                     }
                 },

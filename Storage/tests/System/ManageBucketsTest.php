@@ -73,6 +73,41 @@ class ManageBucketsTest extends StorageTestCase
         $this->assertEquals('multi-region', $bucket->info()['locationType']);
     }
 
+    public function testEncryptionEnforcement()
+    {
+        $name = uniqid(self::TESTING_PREFIX);
+        $options = [
+            'encryption' => [
+                'googleManagedEncryptionEnforcementConfig' => [
+                    'restrictionMode' => 'NOT_RESTRICTED'
+                ]
+            ]
+        ];
+
+        $bucket = self::createBucket(self::$client, $name, $options);
+        $this->assertEquals(
+            $options['encryption']['googleManagedEncryptionEnforcementConfig']['restrictionMode'],
+            $bucket->info()['encryption']['googleManagedEncryptionEnforcementConfig']['restrictionMode']
+        );
+        $this->assertArrayHasKey(
+            'effectiveTime',
+            $bucket->info()['encryption']['googleManagedEncryptionEnforcementConfig']
+        );
+
+        $updateOptions = [
+            'encryption' => [
+                'googleManagedEncryptionEnforcementConfig' => [
+                    'restrictionMode' => 'FULLY_RESTRICTED'
+                ]
+            ]
+        ];
+        $bucket->update($updateOptions);
+        $this->assertEquals(
+            $updateOptions['encryption']['googleManagedEncryptionEnforcementConfig']['restrictionMode'],
+            $bucket->info()['encryption']['googleManagedEncryptionEnforcementConfig']['restrictionMode']
+        );
+    }
+
     public function testCreatesDualRegionBucket()
     {
         $name = uniqid(self::TESTING_PREFIX);

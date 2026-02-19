@@ -438,6 +438,33 @@ class BucketTest extends TestCase
         $this->assertArrayHasKey('terminalStorageClassUpdateTime', $autoclassInfo);
     }
 
+    public function testUpdateEncryptionEnforcement()
+    {
+        $encryptionConfig = [
+            'encryption' => [
+                'googleManagedEncryptionEnforcementConfig' => [
+                    'restrictionMode' => 'FULLY_RESTRICTED'
+                ],
+                'customerManagedEncryptionEnforcementConfig' => [
+                    'restrictionMode' => 'NOT_RESTRICTED'
+                ],
+                'customerSuppliedEncryptionEnforcementConfig' => [
+                    'restrictionMode' => 'FULLY_RESTRICTED'
+                ]
+            ]
+        ];
+
+        $this->connection->patchBucket($encryptionConfig + [
+            'bucket' => self::BUCKET_NAME,
+            'userProject' => null
+        ])->willReturn(['name' => self::BUCKET_NAME] + $encryptionConfig);
+
+        $bucket = $this->getBucket();
+        $bucket->update($encryptionConfig);
+
+        $this->assertEquals($encryptionConfig['encryption'], $bucket->info()['encryption']);
+    }
+
     public function testUpdatesDataWithLifecycleBuilder()
     {
         $lifecycleArr = ['test' => 'test'];
