@@ -454,6 +454,14 @@ class StorageClient
      *           `projects/my-project/locations/kr-location/keyRings/my-kr/cryptoKeys/my-key`.
      *           Please note the KMS key ring must use the same location as the
      *           bucket.
+     *     @type array $encryptionEnforcementConfig The bucket's encryption
+     *           enforcement configuration.
+     *     @type string $encryptionEnforcementConfig.googleManaged.restrictionMode
+     *           The restriction mode for Google-managed encryption.
+     *     @type string $encryptionEnforcementConfig.customerManaged.restrictionMode
+     *           The restriction mode for customer-managed encryption.
+     *     @type string $encryptionEnforcementConfig.customerSupplied.restrictionMode
+     *           The restriction mode for customer-supplied encryption.
      *     @type bool $defaultEventBasedHold When `true`, newly created objects
      *           in this bucket will be retained indefinitely until an event
      *           occurs, signified by the hold's release.

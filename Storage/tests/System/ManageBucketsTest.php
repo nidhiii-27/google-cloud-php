@@ -335,6 +335,40 @@ class ManageBucketsTest extends StorageTestCase
         $this->assertEquals('storage#bucket', self::$bucket->reload()['kind']);
     }
 
+    public function testEncryptionEnforcementConfig()
+    {
+        $bucket = self::createBucket(self::$client, uniqid(self::TESTING_PREFIX));
+
+        $config = [
+            'encryptionEnforcementConfig' => [
+                'googleManaged' => [
+                    'restrictionMode' => Bucket::RESTRICTION_MODE_FULLY_RESTRICTED
+                ]
+            ]
+        ];
+
+        $bucket->update($config);
+        $bucket->reload();
+
+        $info = $bucket->info();
+        $this->assertArrayHasKey('encryptionEnforcementConfig', $info);
+        $this->assertEquals(
+            Bucket::RESTRICTION_MODE_FULLY_RESTRICTED,
+            $info['encryptionEnforcementConfig']['googleManaged']['restrictionMode']
+        );
+        $this->assertArrayHasKey('effectiveTime', $info['encryptionEnforcementConfig']['googleManaged']);
+
+        // Test getters
+        $this->assertEquals(
+            $info['encryptionEnforcementConfig'],
+            $bucket->encryptionEnforcementConfig()
+        );
+        $this->assertEquals(
+            Bucket::RESTRICTION_MODE_FULLY_RESTRICTED,
+            $bucket->googleManagedEncryptionEnforcementConfig()['restrictionMode']
+        );
+    }
+
     /**
      * @group storageiam
      */
