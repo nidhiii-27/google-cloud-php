@@ -740,6 +740,60 @@ class BucketTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider encryptionEnforcementConfigProvider
+     */
+    public function testUpdateEncryptionEnforcementConfig($config)
+    {
+        $expectedInfo = $config;
+        foreach ($expectedInfo['encryptionEnforcementConfig'] as $key => $val) {
+            $expectedInfo['encryptionEnforcementConfig'][$key]['effectiveTime'] = '2024-05-01T01:01:01.045123Z';
+        }
+
+        $this->connection->patchBucket(Argument::any())->willReturn(
+            ['name' => 'bucket'] +
+            $expectedInfo
+        );
+        $bucket = $this->getBucket([
+            'name' => 'bucket',
+        ]);
+
+        $bucket->update($config);
+
+        $this->assertEquals($expectedInfo['encryptionEnforcementConfig'], $bucket->encryptionEnforcementConfig());
+        $this->assertEquals(
+            $expectedInfo['encryptionEnforcementConfig']['googleManaged'],
+            $bucket->googleManagedEncryptionEnforcementConfig()
+        );
+        $this->assertEquals(
+            $expectedInfo['encryptionEnforcementConfig']['customerManaged'],
+            $bucket->customerManagedEncryptionEnforcementConfig()
+        );
+        $this->assertEquals(
+            $expectedInfo['encryptionEnforcementConfig']['customerSupplied'],
+            $bucket->customerSuppliedEncryptionEnforcementConfig()
+        );
+    }
+
+    public function encryptionEnforcementConfigProvider()
+    {
+        return [
+            [[
+                'encryptionEnforcementConfig' => [
+                    'googleManaged' => [
+                        'restrictionMode' => Bucket::RESTRICTION_MODE_FULLY_RESTRICTED
+                    ],
+                    'customerManaged' => [
+                        'restrictionMode' => Bucket::RESTRICTION_MODE_NOT_RESTRICTED
+                    ],
+                    'customerSupplied' => [
+                        'restrictionMode' => Bucket::RESTRICTION_MODE_NOT_RESTRICTED
+                    ]
+                ]
+            ]]
+        ];
+    }
+
     public function terminalStorageClass()
     {
         return [

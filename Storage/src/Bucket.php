@@ -58,6 +58,16 @@ class Bucket
     const TOPIC_REGEX = '/projects\/[^\/]*\/topics\/(.*)/';
 
     /**
+     * @var string
+     */
+    const RESTRICTION_MODE_NOT_RESTRICTED = 'NotRestricted';
+
+    /**
+     * @var string
+     */
+    const RESTRICTION_MODE_FULLY_RESTRICTED = 'FullyRestricted';
+
+    /**
      * @var Acl ACL for the bucket.
      */
     private $acl;
@@ -1029,6 +1039,14 @@ class Bucket
      *           `projects/my-project/locations/kr-location/keyRings/my-kr/cryptoKeys/my-key`.
      *           Please note the KMS key ring must use the same location as the
      *           bucket.
+     *     @type array $encryptionEnforcementConfig The bucket's encryption
+     *           enforcement configuration.
+     *     @type string $encryptionEnforcementConfig.googleManaged.restrictionMode
+     *           The restriction mode for Google-managed encryption.
+     *     @type string $encryptionEnforcementConfig.customerManaged.restrictionMode
+     *           The restriction mode for customer-managed encryption.
+     *     @type string $encryptionEnforcementConfig.customerSupplied.restrictionMode
+     *           The restriction mode for customer-supplied encryption.
      *     @type bool $defaultEventBasedHold When `true`, newly created objects
      *           in this bucket will be retained indefinitely until an event
      *           occurs, signified by the hold's release.
@@ -1233,6 +1251,73 @@ class Bucket
     public function reload(array $options = [])
     {
         return $this->info = $this->connection->getBucket($options + $this->identity);
+    }
+
+    /**
+     * Retrieves the bucket's encryption enforcement configuration.
+     *
+     * Example:
+     * ```
+     * $config = $bucket->encryptionEnforcementConfig();
+     * echo $config['googleManaged']['restrictionMode'];
+     * ```
+     *
+     * @return array
+     */
+    public function encryptionEnforcementConfig()
+    {
+        return $this->info['encryptionEnforcementConfig'] ?? [];
+    }
+
+    /**
+     * Retrieves the bucket's Google-managed encryption enforcement
+     * configuration.
+     *
+     * Example:
+     * ```
+     * $config = $bucket->googleManagedEncryptionEnforcementConfig();
+     * echo $config['restrictionMode'];
+     * ```
+     *
+     * @return array
+     */
+    public function googleManagedEncryptionEnforcementConfig()
+    {
+        return $this->encryptionEnforcementConfig()['googleManaged'] ?? [];
+    }
+
+    /**
+     * Retrieves the bucket's customer-managed encryption enforcement
+     * configuration.
+     *
+     * Example:
+     * ```
+     * $config = $bucket->customerManagedEncryptionEnforcementConfig();
+     * echo $config['restrictionMode'];
+     * ```
+     *
+     * @return array
+     */
+    public function customerManagedEncryptionEnforcementConfig()
+    {
+        return $this->encryptionEnforcementConfig()['customerManaged'] ?? [];
+    }
+
+    /**
+     * Retrieves the bucket's customer-supplied encryption enforcement
+     * configuration.
+     *
+     * Example:
+     * ```
+     * $config = $bucket->customerSuppliedEncryptionEnforcementConfig();
+     * echo $config['restrictionMode'];
+     * ```
+     *
+     * @return array
+     */
+    public function customerSuppliedEncryptionEnforcementConfig()
+    {
+        return $this->encryptionEnforcementConfig()['customerSupplied'] ?? [];
     }
 
     /**

@@ -129,6 +129,48 @@
                         }
                     }
                 },
+                "encryptionEnforcementConfig": {
+                    "type": "object",
+                    "description": "The bucket's encryption enforcement configuration.",
+                    "properties": {
+                        "googleManaged": {
+                            "type": "object",
+                            "properties": {
+                                "restrictionMode": {
+                                    "type": "string"
+                                },
+                                "effectiveTime": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                }
+                            }
+                        },
+                        "customerManaged": {
+                            "type": "object",
+                            "properties": {
+                                "restrictionMode": {
+                                    "type": "string"
+                                },
+                                "effectiveTime": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                }
+                            }
+                        },
+                        "customerSupplied": {
+                            "type": "object",
+                            "properties": {
+                                "restrictionMode": {
+                                    "type": "string"
+                                },
+                                "effectiveTime": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                }
+                            }
+                        }
+                    }
+                },
                 "cors": {
                     "type": "array",
                     "description": "The bucket's Cross-Origin Resource Sharing (CORS) configuration.",
